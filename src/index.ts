@@ -65,7 +65,7 @@ function loadEnvFiles(envName: string | null, customEnvPath: string | null) {
     // Load default .env file
     baseEnv = config();
     if (baseEnv.error) {
-      console.warn("Warning: No .env file found");
+      // console.warn("Warning: No .env file found");
     }
   }
 
