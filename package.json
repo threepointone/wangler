@@ -1,0 +1,40 @@
+{
+  "name": "wangler",
+  "version": "0.0.2",
+  "description": "Wrangler wrapper with .env file support",
+  "main": "dist/index.js",
+  "bin": {
+    "wangler": "./dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/threepointone/wangler.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  },
+  "peerDependencies": {
+    "wrangler": "*"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "cloudflare",
+    "workers",
+    "wrangler",
+    "dotenv"
+  ],
+  "author": "Sunil Pai <spai@cloudflare.com>",
+  "license": "MIT"
+}
