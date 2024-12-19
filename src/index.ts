@@ -156,7 +156,11 @@ if (
   const defineArgs = Object.entries(allEnvVars)
     .map(
       ([key, value]) =>
-        `--define process.env.${key}:\'${JSON.stringify(value)}\'`
+        `--define process.env.${key}:\'${JSON.stringify(
+          value
+        )}\' --define import.meta.env.${key}:\'${JSON.stringify(
+          value
+        )}\' --var ${key}:${JSON.stringify(value)}`
     )
     .join(" ");
 
