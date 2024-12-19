@@ -134,9 +134,6 @@ if (
   child.on("exit", (code) => {
     process.exit(code || 0);
   });
-
-  // process.exit(0);
-  // return;
 } else {
   // Extract --penv arguments and remaining args
   const { envVars: penvVars, remainingArgs } = extractPenvArgs(additionalArgs);

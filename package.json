@@ -14,7 +14,8 @@
     "build": "tsc",
     "prepare": "npm run build",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "dotenv": "^16.4.7"
