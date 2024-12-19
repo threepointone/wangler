@@ -1,4 +1,6 @@
 import { describe, test, expect, beforeEach, afterEach, vi } from "vitest";
+// import { spawn } from "child_process";
+// import path from "path";
 
 // Mock dotenv
 vi.mock("dotenv", () => ({
@@ -22,6 +24,25 @@ vi.mock("dotenv", () => ({
       },
     };
   }),
+}));
+
+// Mock child_process.spawn
+vi.mock("child_process", () => ({
+  spawn: vi.fn(() => ({
+    on: vi.fn((event, callback) => {
+      console.log("spawn", event, callback);
+      if (event === "exit") {
+        // callback(0);
+      }
+    }),
+  })),
+}));
+
+// Mock path.resolve to return a predictable path
+vi.mock("path", () => ({
+  resolve: vi.fn(() => "/mock/path/to/wrangler.js"),
+  dirname: vi.fn(),
+  basename: vi.fn(),
 }));
 
 describe("wangler", () => {
@@ -153,5 +174,51 @@ describe("wangler", () => {
     expect(fullCommand).toContain(
       "--define process.env.API_URL:'\"override-value\"'"
     );
+  });
+});
+
+describe("Command passthrough", () => {
+  const originalArgv = process.argv;
+  let fullCommand: string;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.resetModules();
+    process.argv = originalArgv;
+  });
+
+  async function importAndGetCommand() {
+    const module = await import("./index.js");
+    return module.fullCommand;
+  }
+
+  test("should pass through non-dev/deploy commands directly to wrangler", async () => {
+    process.argv = ["node", "script.js", "whoami", "--some-flag"];
+    fullCommand = await importAndGetCommand();
+    expect(fullCommand).toBe(
+      "node /mock/path/to/wrangler.js whoami --some-flag"
+    );
+  });
+
+  test("should not pass through dev command", async () => {
+    process.argv = ["node", "script.js", "dev", "--some-flag"];
+    fullCommand = await importAndGetCommand();
+    expect(fullCommand).toContain("dev");
+    expect(fullCommand).toContain("--some-flag");
+    expect(fullCommand).not.toBe(
+      "node /mock/path/to/wrangler.js dev --some-flag"
+    );
+    expect(fullCommand).toContain("--define process.env"); // Should include env processing
+  });
+
+  test("should not pass through deploy command", async () => {
+    process.argv = ["node", "script.js", "deploy", "--some-flag"];
+    fullCommand = await importAndGetCommand();
+    expect(fullCommand).toContain("deploy");
+    expect(fullCommand).toContain("--some-flag");
+    expect(fullCommand).not.toBe(
+      "node /mock/path/to/wrangler.js deploy --some-flag"
+    );
+    expect(fullCommand).toContain("--define process.env"); // Should include env processing
   });
 });

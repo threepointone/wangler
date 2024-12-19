@@ -2,7 +2,7 @@
 
 import { spawn } from "child_process";
 import { config, DotenvConfigOutput } from "dotenv";
-import path from "path";
+import * as path from "path";
 
 // Function to find --env value in args
 function getEnvFromArgs(args: string[]): string | null {
@@ -111,49 +111,73 @@ function loadEnvFiles(envName: string | null, customEnvPath: string | null) {
 // Get the command (dev or deploy) and additional args
 const [, , command, ...additionalArgs] = process.argv;
 
-if (!command || !["dev", "deploy"].includes(command)) {
-  console.error('Please specify either "dev" or "deploy" as a command');
-  process.exit(1);
-}
-
-// Extract --penv arguments and remaining args
-const { envVars: penvVars, remainingArgs } = extractPenvArgs(additionalArgs);
-
-// Load environment variables based on --env and --env-file arguments
-const envName = getEnvFromArgs(remainingArgs);
-const customEnvPath = getEnvFilePath(additionalArgs);
-const dotenvVars = loadEnvFiles(envName, customEnvPath);
-
-// Merge all environment variables, with --penv taking highest priority
-const allEnvVars = {
-  ...dotenvVars,
-  ...penvVars,
-};
-
-// Convert environment variables to --define arguments
-const defineArgs = Object.entries(allEnvVars)
-  .map(
-    ([key, value]) => `--define process.env.${key}:\'${JSON.stringify(value)}\'`
-  )
-  .join(" ");
-
-// Find the actual wrangler binary
 const wranglerPath = path.resolve(
   require.resolve("wrangler/package.json"),
   "../bin/wrangler.js"
 );
 
-// Construct the full command with remaining args
-export const fullCommand = `node ${wranglerPath} ${command} ${defineArgs} ${remainingArgs.join(
-  " "
-)}`;
+// Pass all arguments directly to wrangler
+export let fullCommand = `node ${wranglerPath} ${process.argv
+  .slice(2)
+  .join(" ")}`;
 
-// Execute wrangler with the environment variables
-const child = spawn(fullCommand, {
-  stdio: "inherit",
-  shell: true,
-});
+// If command is not dev or deploy, pass through to wrangler directly
+if (
+  !command ||
+  (!["dev", "deploy"].includes(command) && command !== undefined)
+) {
+  const child = spawn(fullCommand, {
+    stdio: "inherit",
+    shell: true,
+  });
 
-child.on("exit", (code) => {
-  process.exit(code || 0);
-});
+  child.on("exit", (code) => {
+    process.exit(code || 0);
+  });
+
+  // process.exit(0);
+  // return;
+} else {
+  // Extract --penv arguments and remaining args
+  const { envVars: penvVars, remainingArgs } = extractPenvArgs(additionalArgs);
+
+  // Load environment variables based on --env and --env-file arguments
+  const envName = getEnvFromArgs(remainingArgs);
+  const customEnvPath = getEnvFilePath(additionalArgs);
+  const dotenvVars = loadEnvFiles(envName, customEnvPath);
+
+  // Merge all environment variables, with --penv taking highest priority
+  const allEnvVars = {
+    ...dotenvVars,
+    ...penvVars,
+  };
+
+  // Convert environment variables to --define arguments
+  const defineArgs = Object.entries(allEnvVars)
+    .map(
+      ([key, value]) =>
+        `--define process.env.${key}:\'${JSON.stringify(value)}\'`
+    )
+    .join(" ");
+
+  // Find the actual wrangler binary
+  // const wranglerPath = path.resolve(
+  //   require.resolve("wrangler/package.json"),
+  //   "../bin/wrangler.js"
+  // );
+
+  // Construct the full command with remaining args
+  fullCommand = `node ${wranglerPath} ${command} ${defineArgs} ${remainingArgs.join(
+    " "
+  )}`;
+
+  // Execute wrangler with the environment variables
+  const child = spawn(fullCommand, {
+    stdio: "inherit",
+    shell: true,
+  });
+
+  child.on("exit", (code) => {
+    process.exit(code || 0);
+  });
+}
