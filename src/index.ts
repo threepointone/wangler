@@ -33,9 +33,26 @@ function extractPenvArgs(args: string[]): {
   let i = 0;
   while (i < args.length) {
     if (args[i] === "--penv" && i + 1 < args.length) {
-      const [key, value] = args[i + 1].split(":");
-      if (key && value) {
-        envVars[key] = value;
+      const keyValue = args[i + 1];
+      const colonIndex = keyValue.indexOf(":");
+
+      if (colonIndex !== -1) {
+        // Handle key:value format
+        const key = keyValue.slice(0, colonIndex);
+        const value = keyValue.slice(colonIndex + 1);
+        if (key && value) {
+          envVars[key] = value;
+        }
+      } else {
+        // Handle key-only format, read from process.env
+        const value = process.env[keyValue];
+        if (value !== undefined) {
+          envVars[keyValue] = value;
+        } else {
+          console.warn(
+            `Warning: Environment variable ${keyValue} not found in process.env`
+          );
+        }
       }
       i += 2; // Skip both the --penv and its value
     } else if (args[i] === "--env-file" && i + 1 < args.length) {
@@ -127,7 +144,7 @@ const wranglerPath = path.resolve(
 );
 
 // Construct the full command with remaining args
-const fullCommand = `node ${wranglerPath} ${command} ${defineArgs} ${remainingArgs.join(
+export const fullCommand = `node ${wranglerPath} ${command} ${defineArgs} ${remainingArgs.join(
   " "
 )}`;
 

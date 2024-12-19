@@ -43,7 +43,9 @@ console.log(process.env.API_KEY); // your-api-key
 
 - You can also have environment specific `.env` files. For example, you can have a `.env.dev` file for development and a `.env.prod` file for production. To use, pass `--env <env>` where `<env>` is the name of the environment you want to use. (This works with wrangler's own `--env` flag, where it'll pick bindings and values defined under `[env.<env>]` in `wrangler.toml`)
 
-- You can pass values in the cli via `--penv <value>`. This is useful for passing in arguments defined in your actual environment (like in CI, you can do `npx wangler dev --penv DATABASE_URL:$SUPABASE_URL` to pass in a value for `DATABASE_URL`).
+- You can pass values in the cli via `--penv <key>:<value>`. This is useful for passing in arguments defined in your actual environment (like in CI, you can do `npx wangler dev --penv DATABASE_URL:$SUPABASE_URL` to pass in a value for `DATABASE_URL`).
+
+- You can pass values in the cli via `--penv <key>` to have the value be read from the environment. This is useful for passing in arguments defined in your actual environment (like in CI, you can do `npx wangler dev --penv DATABASE_URL` to have the value for process.env.DATABASE_URL be read from the environment).
 
 ## How it works
 
