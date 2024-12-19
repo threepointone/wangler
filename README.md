@@ -31,13 +31,16 @@ DATABASE_URL=your-database-url
 npx wangler dev # or wangler deploy
 ```
 
-3. Reference `process.env` in your code:
+3. Reference `process.env`/`import.meta.env` in your code:
 
 ```js
 console.log(process.env.API_KEY); // your-api-key
+console.log(import.meta.env.DATABASE_URL); // your-database-url
 ```
 
 ## Additional features:
+
+- These values are also injected into a request handler's `env` object.
 
 - You can pass a path to a custom `.env` file via `--env-file <path>`.
 
