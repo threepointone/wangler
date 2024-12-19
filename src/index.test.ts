@@ -1,6 +1,4 @@
 import { describe, test, expect, beforeEach, afterEach, vi } from "vitest";
-// import { spawn } from "child_process";
-// import path from "path";
 
 // Mock dotenv
 vi.mock("dotenv", () => ({
@@ -84,7 +82,7 @@ describe("wangler", () => {
     fullCommand = await importAndGetCommand();
     expect(fullCommand).toContain("--define process.env.API_KEY:'\"123\"'");
     expect(fullCommand).toContain("--define import.meta.env.API_KEY:'\"123\"'");
-    expect(fullCommand).toContain("--var API_KEY:'\"123\"'");
+    expect(fullCommand).toContain('--var API_KEY:"123"');
   });
 
   test("--penv with just key reads from process.env", async () => {
@@ -97,7 +95,7 @@ describe("wangler", () => {
     expect(fullCommand).toContain(
       "--define import.meta.env.TEST_KEY:'\"test-value\"'"
     );
-    expect(fullCommand).toContain("--var TEST_KEY:'\"test-value\"'");
+    expect(fullCommand).toContain('--var TEST_KEY:"test-value"');
   });
 
   test("--penv with missing process.env key shows warning", async () => {
@@ -131,15 +129,15 @@ describe("wangler", () => {
     expect(fullCommand).toContain(
       "--define import.meta.env.TEST_KEY:'\"from-process\"'"
     );
-    expect(fullCommand).toContain("--var TEST_KEY:'\"from-process\"'");
+    expect(fullCommand).toContain('--var TEST_KEY:"from-process"');
 
     expect(fullCommand).toContain(
       "--define import.meta.env.API_URL:'\"https://prod.api.com\"'"
     );
-    expect(fullCommand).toContain("--var API_URL:'\"https://prod.api.com\"'");
+    expect(fullCommand).toContain('--var API_URL:"https://prod.api.com"');
     expect(fullCommand).toContain("--define process.env.DEBUG:'\"false\"'");
     expect(fullCommand).toContain("--define import.meta.env.DEBUG:'\"false\"'");
-    expect(fullCommand).toContain("--var DEBUG:'\"false\"'");
+    expect(fullCommand).toContain('--var DEBUG:"false"');
   });
 
   test("passes through additional wrangler arguments", async () => {
@@ -157,7 +155,7 @@ describe("wangler", () => {
     expect(fullCommand).toContain("--port 8787 --local");
     expect(fullCommand).toContain("--define process.env.API_KEY:'\"123\"'");
     expect(fullCommand).toContain("--define import.meta.env.API_KEY:'\"123\"'");
-    expect(fullCommand).toContain("--var API_KEY:'\"123\"'");
+    expect(fullCommand).toContain('--var API_KEY:"123"');
   });
 
   test("handles multiple --penv flags", async () => {
@@ -175,13 +173,13 @@ describe("wangler", () => {
     fullCommand = await importAndGetCommand();
     expect(fullCommand).toContain("--define process.env.API_KEY:'\"123\"'");
     expect(fullCommand).toContain("--define import.meta.env.API_KEY:'\"123\"'");
-    expect(fullCommand).toContain("--var API_KEY:'\"123\"'");
+    expect(fullCommand).toContain('--var API_KEY:"123"');
     expect(fullCommand).toContain("--define process.env.DEBUG:'\"true\"'");
     expect(fullCommand).toContain("--define import.meta.env.DEBUG:'\"true\"'");
-    expect(fullCommand).toContain("--var DEBUG:'\"true\"'");
+    expect(fullCommand).toContain('--var DEBUG:"true"');
     expect(fullCommand).toContain("--define process.env.ENV:'\"prod\"'");
     expect(fullCommand).toContain("--define import.meta.env.ENV:'\"prod\"'");
-    expect(fullCommand).toContain("--var ENV:'\"prod\"'");
+    expect(fullCommand).toContain('--var ENV:"prod"');
   });
 
   test("--penv overrides env files", async () => {
@@ -201,7 +199,7 @@ describe("wangler", () => {
     expect(fullCommand).toContain(
       "--define import.meta.env.API_URL:'\"override-value\"'"
     );
-    expect(fullCommand).toContain("--var API_URL:'\"override-value\"'");
+    expect(fullCommand).toContain('--var API_URL:"override-value"');
   });
 });
 
