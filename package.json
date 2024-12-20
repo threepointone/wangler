@@ -1,6 +1,6 @@
 {
   "name": "wangler",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Wrangler wrapper with .env file support",
   "main": "dist/index.js",
   "bin": {
@@ -12,7 +12,6 @@
   },
   "scripts": {
     "build": "tsc",
-    "prepare": "npm run build",
     "test": "vitest run",
     "test:watch": "vitest",
     "prepublishOnly": "npm run build"
@@ -22,6 +21,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
+    "esbuild": "0.24.2",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
   },
@@ -40,5 +40,8 @@
     "dotenv"
   ],
   "author": "Sunil Pai <spai@cloudflare.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "overrides": {
+    "esbuild": "0.24.2"
+  }
 }

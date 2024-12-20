@@ -149,23 +149,30 @@ if (
     ...penvVars,
   };
 
+  // Function to check if a string is a valid JavaScript identifier
+  function isValidJSIdentifier(str: string): boolean {
+    // First character must be a letter, underscore, or dollar sign
+    // Subsequent characters can also include numbers
+    return /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(str);
+  }
+
   // Convert environment variables to --define arguments
   const defineArgs = Object.entries(allEnvVars)
-    .map(
-      ([key, value]) =>
-        `--define process.env.${key}:\'${JSON.stringify(
-          value
-        )}\' --define import.meta.env.${key}:\'${JSON.stringify(
-          value
-        )}\' --var ${key}:${JSON.stringify(value)}`
-    )
-    .join(" ");
+    .map(([key, value]) => {
+      const processEnvAccess = isValidJSIdentifier(key)
+        ? `process.env.${key}`
+        : `process.env[\\\"${key}\\\"]`;
+      const importMetaAccess = isValidJSIdentifier(key)
+        ? `import.meta.env.${key}`
+        : `import.meta.env[\\\"${key}\\\"]`;
 
-  // Find the actual wrangler binary
-  // const wranglerPath = path.resolve(
-  //   require.resolve("wrangler/package.json"),
-  //   "../bin/wrangler.js"
-  // );
+      return `--define ${processEnvAccess}:\'${JSON.stringify(
+        value
+      )}\' --define ${importMetaAccess}:\'${JSON.stringify(
+        value
+      )}\' --var ${key}:${JSON.stringify(value)}`;
+    })
+    .join(" ");
 
   // Construct the full command with remaining args
   fullCommand = `node ${wranglerPath} ${command} ${defineArgs} ${remainingArgs.join(
