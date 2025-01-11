@@ -12,6 +12,12 @@ console.log(process.env.TEST);
 console.log(import.meta.env.TEST);
 console.log(process.env["YET-ANOTHER-TEST"]);
 
+try {
+  console.log(process.env.DOES_NOT_EXIST);
+} catch (e) {
+  console.error(e);
+}
+
 export default {
   fetch(request, env) {
     console.log(env);
