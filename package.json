@@ -17,14 +17,14 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.5.0"
   },
   "devDependencies": {
-    "@types/node": "^22.10.5",
-    "esbuild": "0.24.2",
-    "typescript": "^5.7.3",
-    "vitest": "^2.1.8",
-    "wrangler": "^3.101.0"
+    "@types/node": "^22.15.21",
+    "esbuild": "0.25.5",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.4",
+    "wrangler": "^4.17.0"
   },
   "peerDependencies": {
     "wrangler": "*"
@@ -43,6 +43,6 @@
   "author": "Sunil Pai <spai@cloudflare.com>",
   "license": "MIT",
   "overrides": {
-    "esbuild": "0.24.2"
+    "esbuild": "0.25.5"
   }
 }
