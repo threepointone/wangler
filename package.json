@@ -1,6 +1,6 @@
 {
   "name": "wangler",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Wrangler wrapper with .env file support",
   "main": "dist/index.js",
   "bin": {
